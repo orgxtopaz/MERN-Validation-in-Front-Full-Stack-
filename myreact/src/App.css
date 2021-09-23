@@ -1,0 +1,15 @@
+.App {
+  text-align: left;
+}
+
+.users{
+ width: 50%;
+ float: right;
+
+ margin-top: -170px;
+ 
+}
+.rowData{
+  color:red;
+}
+
