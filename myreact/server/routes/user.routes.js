@@ -28,11 +28,11 @@ router.route("/add").post((req, res) => {
 
 // //details
 
-// router.route("/:id").get((req, res) => {
-//   User.findById(req.params.id)
-//     .then((user) => res.json(user))
-//     .catch((err) => res.status(400).json("Error: " + err));
-// });
+router.route("/view/:id").get((req, res) => {
+  User.findById(req.params.id)
+    .then((user) => res.json(user))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
 
 //DELETE
 router.route("/delete/:id").delete((req, res) => {
@@ -42,17 +42,16 @@ router.route("/delete/:id").delete((req, res) => {
 });
 
 //UPDATE
-router.route("/update/:id").post((req, res) => {
+router.route("/update/:id").put((req, res) => {
   User.findById(req.params.id)
     .then((user) => {
-      user.fullname = req.body.fullname;
+  
       user.location = req.body.location;
       user.email = req.body.email;
       user.contactNumber = req.body.contactNumber;
-      user.date = req.body.date;
-
-      user
-        .save()
+      
+      user.save()
+        
         .then((user) => res.json("Record was updated."))
         .catch((err) => res.status(400).json("Error: " + err));
     })

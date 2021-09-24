@@ -27,10 +27,11 @@ function Delete() {
   //   );
   // };
    
-  let {id}=useParams();
+  let {deleteId}=useParams();
     return (
         <div>
-            <h1>DELETE {id}</h1>
+            <h1>DELETE {deleteId}</h1>
+          
  
         </div>
     )

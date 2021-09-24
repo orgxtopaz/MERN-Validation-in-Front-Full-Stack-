@@ -1,8 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-//PARAMS SO WE CAN PASS THE SPECIFIC ID.
 
-
-import { BrowserRouter as Router, Route, Link } from "react-router-dom"; //routes
+import { BrowserRouter as Router,Route, Link } from "react-router-dom"; //routes
 
 import "./component.css";
 import { useState } from "react"; //HERE we import useState Hook so we can add state to our functional components.
@@ -78,8 +76,10 @@ function Forms() {
   const [contactNumber, setContactNumber] = useState("");
   const [userList, setUserList] = useState([]);
 
+ 
   /// ADD DATA TO DATABASE----------------------------------------
   const addUser = (data) => {
+    console.log(fullname,date);
     //CURRENT DATE
     const today = new Date();
     const currentDate =
@@ -94,8 +94,14 @@ function Forms() {
     console.log("data " + data.date);
     console.log("current " + currentDate);
 
+    
     //IF CURRENT DATE IS EQUAL TO THE DATE PICKED BY THE USER/ ALREADY FORMATTED.
     if (currentDate === data.date) {
+
+      //THIS DATE FORMAT WILL BE INSERTED IF THE DATE INPUTTED BY THE USER IS EQUAL TO THE CURRENT DATE
+    var dateInserted= new Date();
+    const dateFormatted =((dateInserted.getMonth() > 8) ? (dateInserted.getMonth() + 1) : ('0' + (dateInserted.getMonth() + 1))) + '/' + ((dateInserted.getDate() > 9) ? dateInserted.getDate() : ('0' + dateInserted.getDate())) + '/' + dateInserted.getFullYear();
+
       // Date equals today's date
       console.log("Equal");
       console.log(data);
@@ -104,7 +110,7 @@ function Forms() {
       Axios.post("http://localhost:5000/user/add", {
         fullname: data.fullname,
         email: data.email,
-        date: data.date,
+        date: dateFormatted,
         location: data.location,
         contactNumber: data.contactNumber,
       }).then(() => {
@@ -113,7 +119,7 @@ function Forms() {
           {
             fullname: data.fullname,
             email: data.email,
-            date: data.date,
+            date: dateFormatted,
             location: data.location,
             contactNumber: data.contactNumber,
           },
@@ -126,25 +132,20 @@ function Forms() {
   };
 
   //  RETRIEVE/SHOW Users Data---------------------------------------
-  let displayOnce=1;
- 
 
-  if (displayOnce > 0) {
+  try {
+    // Load async data from an inexistent endpoint.
     Axios.get("http://localhost:5000/user/").then((response) => {
       setUserList(response.data);
-      displayOnce = 0;
-      
     });
+    
+  } catch (e) {
+    console.log(` Axios request failed: ${e}`);
   }
 
-
-  ///GET USER ID FUNCTION
-
-  const getUserId =(data) =>{
-     console.log(data);
   
 
-  }
+
 
   return (
     <div className="App">
@@ -205,7 +206,7 @@ function Forms() {
             name="location"
             placeholder=""
           >
-            <option value="" disabled hidden>
+            <option value="" hidden>
               Select Location
             </option>
             <option value="Manila">Manila</option>
@@ -249,22 +250,31 @@ function Forms() {
             </TableHead>
             <TableBody>
               {userList.map((val) => (
-                <TableRow>
-                  <TableCell align="left">{val._id}</TableCell>
+                //Each child in a list should have a unique "key" prop. val._id is the key :)
+                  <TableRow key={val._id}  > 
+
+                  <TableCell  align="left">{val._id}</TableCell>
                   <TableCell align="left">{val.fullname}</TableCell>
                   <TableCell align="left">{val.email}</TableCell>
                   <TableCell align="left">{val.contactNumber}</TableCell>
                   <TableCell align="left">{val.location}</TableCell>
                   <TableCell align="left">{val.date}</TableCell>
 
+
+                  <TableCell align="left">
+                    {/* TRANSITIONING TO VIEW COMPONENT WHEN CLICK */}
+                    <Link  to={`/View/${val._id}`}>View</Link>
+                  </TableCell>
+
+
                   <TableCell align="left">
                     {/* TRANSITIONING TO DELETE COMPONENT WHEN CLICK */}
-                  {/* <Link to={"/Delete/"} onClick={()=>this.getUserId(val._id)}>Delete</Link>  */}
-                   <button  onClick={() => getUserId(val._id)} >Delete</button>
+                    <Link  to={`/Delete/${val._id}`}>Delete</Link>
                   </TableCell>
 
                   <TableCell align="left">
                     {/* TRANSITIONING TO UPDATE COMPONENT WHEN CLICK */}
+                    <Link  to={`/Update/${val._id}`}>Update</Link>
                   </TableCell>
                 </TableRow>
               ))}
@@ -273,8 +283,6 @@ function Forms() {
         </TableContainer>
         <div></div>
       </div>
-
-     
     </div>
   );
 }

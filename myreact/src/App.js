@@ -5,6 +5,9 @@ import Forms from "./components/Forms";
 import About from "./components/About";
 import Contact from "./components/Contact";
 import Delete from "./components/Delete";
+import Update from "./components/Update";
+import View from "./components/View";
+
 
 
 
@@ -29,7 +32,10 @@ function App() {
         <Route exact path="/About" component={About} />
         <Route  exact path="/Contact" component={Contact} />
         <Route  exact path="/"  component={Forms} />
-        <Route  path="/Delete/:{val._id}"  component={Delete} />
+        <Route  exact path="/View/:viewId"  component={View} />
+        <Route  exact path="/Delete/:deleteId"  component={Delete} />
+        <Route  exact path="/Update/:updateId"  component={Update} />
+       
        
       </Router>
     </div>
