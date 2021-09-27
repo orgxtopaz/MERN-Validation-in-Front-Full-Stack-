@@ -4,6 +4,7 @@ import { useState } from "react"; //HERE we import useState Hook so we can add s
 import Axios from "axios"; //allows us to make GET and POST requests from the browser.
 import "bootstrap/dist/css/bootstrap.min.css";
 
+import { useEffect } from "react"; //a hook that GIVES  "side-effects"
 import { useHistory } from "react-router-dom"; // allows us to access our path / route history.
 
 function View() {
@@ -18,14 +19,18 @@ function View() {
   let { viewId } = useParams();
 
   //  RETRIEVE/SHOW SPECIFIC  Users Data by its ID with the use of params---------------------------------------
-  let displayOnce = 1;
-
-  if (displayOnce > 0) {
-    displayOnce = 0;
-    Axios.get(`http://localhost:5000/user/view/${viewId}`).then((response) => {
-      setUserDetails(response.data);
-    });
-  }
+  const isLoaded = [true];
+  // IF PAGE IS LOADED THEN THIS WILL HAPPEN WITH THE USE OF useEffect
+  useEffect(() => {
+    if (isLoaded) {
+      Axios.get(`http://localhost:5000/user/view/${viewId}`).then(
+        (response) => {
+          setUserDetails(response.data);
+        }
+      );
+    
+    }
+  }, isLoaded);
 
   return (
     <>

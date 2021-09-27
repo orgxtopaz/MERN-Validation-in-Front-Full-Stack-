@@ -7,7 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useHistory } from "react-router-dom"; // allows us to access our path / route history.
 ///FORM,YUP, ALL FOR VALIDATION ALSO AXIOS FOR THE API
 import "./component.css";
-
+import { useEffect } from "react"; //a hook that GIVES  "side-effects"
 import { useForm } from "react-hook-form"; //custom hook for managing forms with ease.
 import * as yup from "yup"; //for validation
 import { yupResolver } from "@hookform/resolvers/yup"; //Define object schema and its validation.
@@ -81,19 +81,19 @@ function Update() {
 
   const [userDetails, setUserDetails] = useState([]);
 
-  //  RETRIEVE/SHOW SPECIFIC  Users Data by its ID with the use of params---------------------------------------
-
-
- try{
+   //  RETRIEVE/SHOW SPECIFIC  Users Data by its ID with the use of params---------------------------------------
+   const isLoaded = ([true]);
+   // IF PAGE IS LOADED THEN THIS WILL HAPPEN WITH THE USE OF useEffect
+   useEffect(() => {
+     if (isLoaded) {
+       
     Axios.get(`http://localhost:5000/user/view/${updateId}`).then(
-        (response) => {
-          setUserDetails(response.data);
-        }
-      );
- }catch(e){
-     console.log("Get User Details Failed")
- }
-   
+      (response) => {
+        setUserDetails(response.data);
+      }
+    );
+     }
+   }, isLoaded);
  
 
   

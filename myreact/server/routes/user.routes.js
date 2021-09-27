@@ -17,6 +17,7 @@ router.route("/add").post((req, res) => {
   const email = req.body.email;
   const contactNumber = req.body.contactNumber;
   const date = req.body.date;
+ 
 
   const newUser = new User({ fullname, location, email, contactNumber, date }); // Instantiate the User in user.model
 
