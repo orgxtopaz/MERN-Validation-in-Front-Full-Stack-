@@ -6,7 +6,6 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
     fullname:{
-
         type:String,
         required:true,
         trim:true  // removing the first space in value input 

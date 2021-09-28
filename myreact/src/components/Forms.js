@@ -1,10 +1,12 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-//PARAMS SO WE CAN PASS THE SPECIFIC ID.
 
 
 import { BrowserRouter as Router, Route, Link } from "react-router-dom"; //routes
+import $ from "jquery";
 
 import "./component.css";
+
+import { useEffect } from "react"; //a hook that GIVES  "side-effects"
 import { useState } from "react"; //HERE we import useState Hook so we can add state to our functional components.
 import { useForm } from "react-hook-form"; //custom hook for managing forms with ease.
 import * as yup from "yup"; //for validation
@@ -19,6 +21,8 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
+import Button from "@mui/material/Button";
+
 ////--------------
 
 ///IMPORT DATEPICKER FOR OUR DATE
@@ -27,11 +31,15 @@ import "react-datepicker/dist/react-datepicker.css";
 
 ///------------------
 
+////TABLE
+import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
+import DeleteIcon from "@mui/icons-material/Delete";
+
+///-------------
 //VALIDATION REQUIREMENTS.
 const schema = yup.object().shape({
   fullname: yup
     .string()
-
     .required(" Full Name field cannot be blank")
     .max(30, " Full Name field accept up to 30 in size only")
     .matches(/^[aA-zZ\s]+$/, " Full Name field accept characters values only "),
@@ -80,6 +88,7 @@ function Forms() {
 
   /// ADD DATA TO DATABASE----------------------------------------
   const addUser = (data) => {
+    console.log(fullname, date);
     //CURRENT DATE
     const today = new Date();
     const currentDate =
@@ -96,6 +105,19 @@ function Forms() {
 
     //IF CURRENT DATE IS EQUAL TO THE DATE PICKED BY THE USER/ ALREADY FORMATTED.
     if (currentDate === data.date) {
+      //THIS DATE FORMAT WILL BE INSERTED IF THE DATE INPUTTED BY THE USER IS EQUAL TO THE CURRENT DATE
+      var dateInserted = new Date();
+      const dateFormatted =
+        (dateInserted.getMonth() > 8
+          ? dateInserted.getMonth() + 1
+          : "0" + (dateInserted.getMonth() + 1)) +
+        "/" +
+        (dateInserted.getDate() > 9
+          ? dateInserted.getDate()
+          : "0" + dateInserted.getDate()) +
+        "/" +
+        dateInserted.getFullYear();
+
       // Date equals today's date
       console.log("Equal");
       console.log(data);
@@ -104,7 +126,7 @@ function Forms() {
       Axios.post("http://localhost:5000/user/add", {
         fullname: data.fullname,
         email: data.email,
-        date: data.date,
+        date: dateFormatted,
         location: data.location,
         contactNumber: data.contactNumber,
       }).then(() => {
@@ -113,7 +135,7 @@ function Forms() {
           {
             fullname: data.fullname,
             email: data.email,
-            date: data.date,
+            date: dateFormatted,
             location: data.location,
             contactNumber: data.contactNumber,
           },
@@ -126,156 +148,358 @@ function Forms() {
   };
 
   //  RETRIEVE/SHOW Users Data---------------------------------------
-  let displayOnce=1;
- 
 
-  if (displayOnce > 0) {
-    Axios.get("http://localhost:5000/user/").then((response) => {
-      setUserList(response.data);
-      displayOnce = 0;
-      
-    });
+  // IF PAGE IS LOADED THEN THIS WILL HAPPEN WITH THE USE OF useEffect display on table
+
+  const isLoaded = [true];
+  useEffect(() => {
+    if (isLoaded) {
+      Axios.get("http://localhost:5000/user/").then((response) => {
+        setUserList(response.data);
+      });
+    }
+  }, isLoaded);
+  const [userId, setUserId] = useState("");
+  console.log(userId);
+  // console.log(userId)
+
+  function clickz(e) {
+    console.log(e.target.id);
+
+    //  var option = $(this).closest('button');
+    //  var hehe =JSON.stringify(option);
   }
+  let columns = [];
 
+  columns = [
+    {
+      field: `_id`,
+      headerName: "ID",
+      width: 70,
+      className: "userId",
+      headerAlign: "center",
+    },
+    {
+      field: "fullname",
+      headerName: "Full Name",
+      width: 140,
+      headerAlign: "center",
+    },
+    {
+      field: "email",
+      headerName: "Email Address",
+      width: 140,
+      headerAlign: "center",
+    },
+    {
+      field: "contactNumber",
+      headerName: "Contact Number",
+      width: 130,
+      headerAlign: "center",
+    },
+    {
+      field: "location",
+      headerName: "Location",
+      width: 100,
+      headerAlign: "center",
+      headerClassName: 'super-app-theme--header',
 
-  ///GET USER ID FUNCTION
+    },
+    {
+      field: "date",
+      headerName: "Registered Date",
+      width: 130,
+      headerAlign: "center",
+    },
 
-  const getUserId =(data) =>{
-     console.log(data);
-  
-
-  }
+    {
+      field: "actionview",
+      headerName: ".",
+      width: 50,
+      //grid renders values into the cells as strings
+      // WHEN THE CELL IS RENDER WE THEN PASS DATA INSIDE PARA MAKA KUHA TAS ROW._ID
+      renderCell: (data) => (
+        <strong>
+          <Link to={`/View/${data.row._id}`}>
+            {" "}
+            <i className="bi bi-eye-fill" style={{ fontSize: "20px",color:"#343a40" }}></i>
+          </Link>
+        </strong>
+      ),
+    },
+    {
+      field: "actionupdate",
+      headerName: ".",
+      width: 50,
+      //grid renders values into the cells as strings
+      // WHEN THE CELL IS RENDER WE THEN PASS DATA INSIDE PARA MAKA KUHA TAS ROW._ID
+      renderCell: (data) => (
+        <strong>
+          <Link to={`/Update/${data.row._id}`}>
+            {" "}
+            <i className="bi bi-pen-fill" style={{ fontSize: "20px",color:"#343a40" }}></i>
+          </Link>
+        </strong>
+      ),
+    },
+    {
+      field: "actiondelete",
+      headerName: ".",
+      width: 50,
+      //grid renders values into the cells as strings
+      // WHEN THE CELL IS RENDER WE THEN PASS DATA INSIDE PARA MAKA KUHA TAS ROW._ID
+      renderCell: (data) => (
+        <strong>
+          <Link to={`/Delete/${data.row._id}`}>
+            {" "}
+            <i className="bi bi-trash-fill" style={{ fontSize: "20px" ,color:"#343a40" }}></i>
+          </Link>
+        </strong>
+      ),
+    },
+  ];
 
   return (
-    <div className="App">
-      <h1>Sign Up</h1>
+    <>
+      <section style={{ backgroundColor: "#eee" }}>
+        <div>
+          <div className="row d-flex w-100 p-3 ">
+            <div className="col-lg-1 col-xl-11 w-100 p-3">
+              <div
+                className="card text-black w-100 p-3"
+                style={{ borderRadius: "5px" }}
+              >
+                <div className="card-body p-md-1 w-100 p-3">
+                  <div className="row ">
+                    <div className="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+                      <p className="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">
+                        Sign up
+                      </p>
 
-      {/* /* "handleSubmit" will validate the inputs before calling "onSubmit" */}
-      <form onSubmit={handleSubmit(addUser)}>
-        <label>Full fullname:</label>
-        {/* register the input into the hook by calling the "register" function */}
-        <input
-          className="placeHolder"
-          type="text"
-          placeholder="Last Name , First Name Middle Initial"
-          onChange={(event) => {
-            setfullname(event.target.value);
-          }}
-          {...register("fullname")}
-          name="fullname"
-        />
-        {/* errors will return when field validation fails  */}
-        <p>{errors.fullname?.message}</p>
+                      <form
+                        className="mx-1 mx-md-5"
+                        onSubmit={handleSubmit(addUser)}
+                      >
+                        {" "}
+                        <label className="form-label" htmlFor="form3Example1c">
+                          Full Name
+                        </label>
+                        <div className="d-flex flex-row align-items-center">
+                          <div className="input-group mb-3">
+                            <div className="input-group-prepend">
+                              <i
+                                className="bi bi-person-circle  input-group-text"
+                                id="basic-addon1" style={{fontSize: "1rem" ,backgroundColor:"#1E88E5"}}
+                              ></i>
+                            </div>
 
-        <label>Email Address:</label>
-        <input
-          className="placeHolder"
-          placeholder="example@email.com"
-          type="text"
-          onChange={(event) => {
-            setEmail(event.target.value);
-          }}
-          {...register("email")}
-          name="email"
-        />
-        <p>{errors.email?.message}</p>
+                            <div className="form-outline flex-fill mb-0">
+                              <input
+                                type="text"
+                                id="form3Example1c"
+                                className="form-control"
+                                placeholder="Last Name , First Name Middle Initial"
+                                onChange={(event) => {
+                                  setfullname(event.target.value);
+                                }}
+                                {...register("fullname")}
+                                name="fullname"
+                              />
+                              {/* errors will return when field validation fails  */}
+                              <small
+                                id="emailHelp"
+                                className="form-text text-danger"
+                              >
+                                {errors.fullname?.message}
+                              </small>
+                            </div>
+                          </div>
+                        </div>
+                        <label className="form-label" htmlFor="form3Example1c">
+                          Email Address
+                        </label>
+                        <div className="d-flex flex-row align-items-center">
+                          <div className="input-group mb-3">
+                            <div className="input-group-prepend">
+                              <i
+                                className="bi bi-envelope-fill input-group-text"
+                                id="basic-addon1" style={{fontSize: "1rem"  ,backgroundColor:"#1E88E5"}}
+                              ></i>
+                            </div>
 
-        <label>Contact Number:</label>
-        <input
-          className="placeHolder"
-          type="text"
-          placeholder="09334399999"
-          onChange={(event) => {
-            setContactNumber(event.target.value);
-          }}
-          {...register("contactNumber")}
-          name="contactNumber"
-        />
-        <p>{errors.contactNumber?.message}</p>
+                            <div className="form-outline flex-fill mb-0">
+                              <input
+                                type="email"
+                                id="form3Example3c"
+                                className="form-control"
+                                placeholder="example@email.com"
+                                type="text"
+                                onChange={(event) => {
+                                  setEmail(event.target.value);
+                                }}
+                                {...register("email")}
+                                name="email"
+                              />
 
-        <div className="col-auto my-1">
-          <select
-            className="form-select custom-select mr-sm-2"
-            id="inlineFormCustomSelect"
-            aria-label="Default select example"
-            onChange={(event) => {
-              setLocation(event.target.value);
-            }}
-            {...register("location")}
-            name="location"
-            placeholder=""
-          >
-            <option value="" disabled hidden>
-              Select Location
-            </option>
-            <option value="Manila">Manila</option>
-            <option value="Cebu">Cebu</option>
-          </select>
+                              {/* errors will return when field validation fails  */}
+                              <small
+                                id="emailHelp"
+                                className="form-text text-danger"
+                              >
+                                {errors.email?.message}
+                              </small>
+                            </div>
+                          </div>
+                        </div>
+                        <label className="form-label" htmlFor="form3Example1c">
+                          Contact Number
+                        </label>
+                        <div className="d-flex flex-row align-items-center">
+                          <div className="input-group mb-3">
+                            <div className="input-group-prepend">
+                              <i
+                                className="bi bi-telephone-fill input-group-text"
+                                id="basic-addon1" style={{fontSize: "1rem"  ,backgroundColor:"#1E88E5"}}
+                              ></i>
+                            </div>
+
+                            <div className="form-outline flex-fill mb-0">
+                              <input
+                                id="form3Example4c"
+                                className="form-control"
+                                type="text"
+                                placeholder="09334399999"
+                                onChange={(event) => {
+                                  setContactNumber(event.target.value);
+                                }}
+                                {...register("contactNumber")}
+                                name="contactNumber"
+                              />
+
+                              {/* errors will return when field validation fails  */}
+                              <small
+                                id="emailHelp"
+                                className="form-text text-danger"
+                              >
+                                {errors.contactNumber?.message}
+                              </small>
+                            </div>
+                          </div>
+                        </div>
+                        <label className="form-label" htmlFor="form3Example1c">
+                          Select Location
+                        </label>
+                        <div className="d-flex flex-row align-items-center">
+                          <div className="input-group mb-3">
+                            <div className="input-group-prepend">
+                              <i
+                                className="bi bi-geo-alt-fill input-group-text"
+                                id="basic-addon1" style={{fontSize: "1rem"  ,backgroundColor:"#1E88E5"}}
+                              ></i>
+                            </div>
+
+                            <div className="form-outline flex-fill mb-0">
+                              <select
+                                className="form-select custom-select mr-sm-2 form-control"
+                                id="inlineFormCustomSelect form3Example4cd"
+                                aria-label="Default select example"
+                                onChange={(event) => {
+                                  setLocation(event.target.value);
+                                }}
+                                {...register("location")}
+                                name="location"
+                                placeholder=""
+                              >
+                                <option value="" hidden>
+                                  Select Location
+                                </option>
+                                <option value="Manila">Manila</option>
+                                <option value="Cebu">Cebu</option>
+                              </select>
+
+                              {/* errors will return when field validation fails  */}
+                              <small
+                                id="emailHelp"
+                                className="form-text text-danger"
+                              >
+                                {errors.location?.message}
+                              </small>
+                            </div>
+                          </div>
+                        </div>
+                        <label className="form-label" htmlFor="form3Example1c">
+                          Registered Date
+                        </label>
+                        <div className="d-flex flex-row align-items-center">
+                          <div className="input-group mb-3">
+                            <div className="input-group-prepend">
+                              <i
+                                className="bi bi-calendar-check-fill input-group-text"
+                                id="basic-addon1" style={{fontSize: "1rem"  ,backgroundColor:"#1E88E5"}}
+                              ></i>
+                            </div>
+
+                            <div className="form-outline flex-fill mb-0">
+                              <input
+                                id="form3Example4cd"
+                                className="form-control"
+                                type="date"
+                                name="date"
+                                placeholder="Choose Date"
+                                format="MM-dd-yyyy"
+                                onChange={(date) => {
+                                  setDate(date);
+                                }}
+                                {...register("date")}
+                              />
+
+                              {/* errors will return when field validation fails  */}
+                              <small
+                                id="emailHelp"
+                                className="form-text text-danger"
+                              >
+                                {errors.date?.message}
+                              </small>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                          <button
+                            type="Submit"
+                            className="btn  btn-lg bi bi-arrow-up-circle-fill"
+                          ></button>
+                        </div>
+                      </form>
+                    </div>
+                    <div className="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
+                      <img
+                        src="https://mdbootstrap.com/img/Photos/new-templates/bootstrap-registration/draw1.png"
+                        className="img-fluid"
+                        alt="Sample image"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <p>{errors.location?.message}</p>
-        <br />
+      </section>
 
-        <input
-          type="date"
-          name="date"
-          placeholder="Choose a Date"
-          format="MM-dd-yyyy"
-          onChange={(date) => {
-            setDate(date);
-          }}
-          {...register("date")}
+      {/* SHOW USER DATA ON TABLE GAMIT ANG DATA GRID */}
+
+      <div style={{ height: 400, width: "70%", marginTop: "-480px",float:"right" }}>
+        {/* data grid include filtering, columns. */}
+        <DataGrid
+          rows={userList}
+          columns={columns}
+          getRowId={(row) => row._id}
+          pageSize={5}
+
+          // checkboxSelection
         />
-
-        <p>{errors.date?.message}</p>
-
-        <button type="submit">Add User</button>
-      </form>
-
-      {/* DISPLAY THE USERS CALL  Data inside THE userList */}
-
-      <div className="users">
-        <TableContainer component={Paper} width="10%">
-          <Table aria-label="caption table" width="10%">
-            <caption>Barongkay</caption>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell align="right">Full Name</TableCell>
-                <TableCell align="right">Email Address</TableCell>
-                <TableCell align="right">Contact Number</TableCell>
-                <TableCell align="right">Location</TableCell>
-                <TableCell align="right">Registered Date</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {userList.map((val) => (
-                <TableRow>
-                  <TableCell align="left">{val._id}</TableCell>
-                  <TableCell align="left">{val.fullname}</TableCell>
-                  <TableCell align="left">{val.email}</TableCell>
-                  <TableCell align="left">{val.contactNumber}</TableCell>
-                  <TableCell align="left">{val.location}</TableCell>
-                  <TableCell align="left">{val.date}</TableCell>
-
-                  <TableCell align="left">
-                    {/* TRANSITIONING TO DELETE COMPONENT WHEN CLICK */}
-                  {/* <Link to={"/Delete/"} onClick={()=>this.getUserId(val._id)}>Delete</Link>  */}
-                   <button  onClick={() => getUserId(val._id)} >Delete</button>
-                  </TableCell>
-
-                  <TableCell align="left">
-                    {/* TRANSITIONING TO UPDATE COMPONENT WHEN CLICK */}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <div></div>
       </div>
-
-     
-    </div>
+    </>
   );
 }
 
