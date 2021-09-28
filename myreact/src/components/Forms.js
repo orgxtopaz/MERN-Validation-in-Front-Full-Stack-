@@ -1,8 +1,9 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 
+
 import { BrowserRouter as Router, Route, Link } from "react-router-dom"; //routes
-import $ from 'jquery'; 
-  
+import $ from "jquery";
+
 import "./component.css";
 
 import { useEffect } from "react"; //a hook that GIVES  "side-effects"
@@ -20,7 +21,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
-import Button from '@mui/material/Button';
+import Button from "@mui/material/Button";
 
 ////--------------
 
@@ -31,13 +32,8 @@ import "react-datepicker/dist/react-datepicker.css";
 ///------------------
 
 ////TABLE
-import { DataGrid,GridActionsCellItem } from "@mui/x-data-grid";
-import DeleteIcon from '@mui/icons-material/Delete';
-
-
-
-
-
+import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 ///-------------
 //VALIDATION REQUIREMENTS.
@@ -145,7 +141,7 @@ function Forms() {
           },
         ]);
       });
-      // window.location.reload();
+      window.location.reload();
     } else {
       alert("Registered date field accept current date");
     }
@@ -161,85 +157,107 @@ function Forms() {
       Axios.get("http://localhost:5000/user/").then((response) => {
         setUserList(response.data);
       });
-
-
     }
-
-
   }, isLoaded);
-   const [userId,setUserId] =useState ("");
-   console.log(userId);
+  const [userId, setUserId] = useState("");
+  console.log(userId);
   // console.log(userId)
- 
- function clickz (e) {
-  
-  alert(e.target.id) 
 
- 
+  function clickz(e) {
+    console.log(e.target.id);
 
+    //  var option = $(this).closest('button');
+    //  var hehe =JSON.stringify(option);
+  }
+  let columns = [];
 
-  //  var option = $(this).closest('button');
-  //  var hehe =JSON.stringify(option);
+  columns = [
+    {
+      field: `_id`,
+      headerName: "ID",
+      width: 70,
+      className: "userId",
+      headerAlign: "center",
+    },
+    {
+      field: "fullname",
+      headerName: "Full Name",
+      width: 140,
+      headerAlign: "center",
+    },
+    {
+      field: "email",
+      headerName: "Email Address",
+      width: 140,
+      headerAlign: "center",
+    },
+    {
+      field: "contactNumber",
+      headerName: "Contact Number",
+      width: 130,
+      headerAlign: "center",
+    },
+    {
+      field: "location",
+      headerName: "Location",
+      width: 100,
+      headerAlign: "center",
+      headerClassName: 'super-app-theme--header',
 
- }
- let columns=[];
+    },
+    {
+      field: "date",
+      headerName: "Registered Date",
+      width: 130,
+      headerAlign: "center",
+    },
 
-     {userList.map(val => {
-       columns = [
-        { field: `_id`, headerName: "ID", width: 70 ,className:"userId"},
-        { field: "fullname", headerName: "Full Name", width: 130 },
-        { field: "email", headerName: "Email Address", width: 130 },
-        { field: "contactNumber", headerName: "Contact Number", width: 130 },
-        { field: "location", headerName: "Location", width: 130 },
-        { field: "date", headerName: "Registered Date", width: 130 },
-        {
-          field: 'actions',
-          type: 'actions',
-          width: 80,
-          
-          getActions: (params) => [
-            <GridActionsCellItem
-            icon={<DeleteIcon />}
-            label="Delete" 
-            />,           
-             <Link  icon={<DeleteIcon />}
-             label="Delete" to={`/View/${val._id}`}  >View</Link>
-              
-          ]
-          },
-          {
-            field: 'action',
-            headerName: 'Year',
-            width: 150,
-            renderCell: (params) => (
-              <strong>
-               
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  id={val._id}
-                  className="btn"
-                  
-                  style={{ marginLeft: 16 }}
-                  
-                  onClick={clickz}
-                  // onClick={clickz(this.val._id)}
-                >
-                  Open
-                </Button>
-              </strong>
-            ),
-          },
-  
-      
-        ]
-  
-  })}
- 
-
-    
-    
+    {
+      field: "actionview",
+      headerName: ".",
+      width: 50,
+      //grid renders values into the cells as strings
+      // WHEN THE CELL IS RENDER WE THEN PASS DATA INSIDE PARA MAKA KUHA TAS ROW._ID
+      renderCell: (data) => (
+        <strong>
+          <Link to={`/View/${data.row._id}`}>
+            {" "}
+            <i className="bi bi-eye-fill" style={{ fontSize: "20px",color:"#343a40" }}></i>
+          </Link>
+        </strong>
+      ),
+    },
+    {
+      field: "actionupdate",
+      headerName: ".",
+      width: 50,
+      //grid renders values into the cells as strings
+      // WHEN THE CELL IS RENDER WE THEN PASS DATA INSIDE PARA MAKA KUHA TAS ROW._ID
+      renderCell: (data) => (
+        <strong>
+          <Link to={`/Update/${data.row._id}`}>
+            {" "}
+            <i className="bi bi-pen-fill" style={{ fontSize: "20px",color:"#343a40" }}></i>
+          </Link>
+        </strong>
+      ),
+    },
+    {
+      field: "actiondelete",
+      headerName: ".",
+      width: 50,
+      //grid renders values into the cells as strings
+      // WHEN THE CELL IS RENDER WE THEN PASS DATA INSIDE PARA MAKA KUHA TAS ROW._ID
+      renderCell: (data) => (
+        <strong>
+          <Link to={`/Delete/${data.row._id}`}>
+            {" "}
+            <i className="bi bi-trash-fill" style={{ fontSize: "20px" ,color:"#343a40" }}></i>
+          </Link>
+        </strong>
+      ),
+    },
+  ];
 
   return (
     <>
@@ -271,7 +289,7 @@ function Forms() {
                             <div className="input-group-prepend">
                               <i
                                 className="bi bi-person-circle  input-group-text"
-                                id="basic-addon1"
+                                id="basic-addon1" style={{fontSize: "1rem" ,backgroundColor:"#1E88E5"}}
                               ></i>
                             </div>
 
@@ -305,7 +323,7 @@ function Forms() {
                             <div className="input-group-prepend">
                               <i
                                 className="bi bi-envelope-fill input-group-text"
-                                id="basic-addon1"
+                                id="basic-addon1" style={{fontSize: "1rem"  ,backgroundColor:"#1E88E5"}}
                               ></i>
                             </div>
 
@@ -341,7 +359,7 @@ function Forms() {
                             <div className="input-group-prepend">
                               <i
                                 className="bi bi-telephone-fill input-group-text"
-                                id="basic-addon1"
+                                id="basic-addon1" style={{fontSize: "1rem"  ,backgroundColor:"#1E88E5"}}
                               ></i>
                             </div>
 
@@ -376,7 +394,7 @@ function Forms() {
                             <div className="input-group-prepend">
                               <i
                                 className="bi bi-geo-alt-fill input-group-text"
-                                id="basic-addon1"
+                                id="basic-addon1" style={{fontSize: "1rem"  ,backgroundColor:"#1E88E5"}}
                               ></i>
                             </div>
 
@@ -417,7 +435,7 @@ function Forms() {
                             <div className="input-group-prepend">
                               <i
                                 className="bi bi-calendar-check-fill input-group-text"
-                                id="basic-addon1"
+                                id="basic-addon1" style={{fontSize: "1rem"  ,backgroundColor:"#1E88E5"}}
                               ></i>
                             </div>
 
@@ -468,77 +486,21 @@ function Forms() {
         </div>
       </section>
 
-      <div className="App">
-        {/* DISPLAY THE USERS CALL  Data inside THE userList */}
+      {/* SHOW USER DATA ON TABLE GAMIT ANG DATA GRID */}
 
-        <div className="users">
-          <TableContainer component={Paper} width="10%">
-            <Table aria-label="caption table" width="10%">
-              <caption>Barongkay</caption>
-              <TableHead>
-                <TableRow>
-                  <TableCell>ID</TableCell>
-                  <TableCell align="right">Full Name</TableCell>
-                  <TableCell align="right">Email Address</TableCell>
-                  <TableCell align="right">Contact Number</TableCell>
-                  <TableCell align="right">Location</TableCell>
-                  <TableCell align="right">Registered Date</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {userList.map((val) => (
-                  //Each child in a list should have a unique "key" prop. val._id is the key :)
-                  <TableRow key={val._id}>
-                    <TableCell align="left">{val._id}</TableCell>
-                    <TableCell align="left">{val.fullname}</TableCell>
-                    <TableCell align="left">{val.email}</TableCell>
-                    <TableCell align="left">{val.contactNumber}</TableCell>
-                    <TableCell align="left">{val.location}</TableCell>
-                    <TableCell align="left">{val.date}</TableCell>
-
-                    <TableCell align="left">
-                      {/* TRANSITIONING TO VIEW COMPONENT WHEN CLICK */}
-                      <Link to={`/View/${val._id}`}>View</Link>
-                    </TableCell>
-
-                    <TableCell align="left">
-                      {/* TRANSITIONING TO DELETE COMPONENT WHEN CLICK */}
-                      <Link to={`/Delete/${val._id}`}>Delete</Link>
-                    </TableCell>
-
-                    <TableCell align="left">
-                      {/* TRANSITIONING TO UPDATE COMPONENT WHEN CLICK */}
-                      <Link to={`/Update/${val._id}`}>Update</Link>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-           
-          </TableContainer>
-          <div></div>
-        </div>
-      </div>
-
-      {/* SHOW USER DATA ON TABLE */}
-
-      <div style={{ height: 400, width: "100%" }}>
+      <div style={{ height: 400, width: "70%", marginTop: "-480px",float:"right" }}>
+        {/* data grid include filtering, columns. */}
         <DataGrid
           rows={userList}
           columns={columns}
           getRowId={(row) => row._id}
           pageSize={5}
-          
+
           // checkboxSelection
         />
       </div>
-
-      {/* EXPERIMENT  */}
-      
     </>
   );
-
- 
 }
 
 export default Forms;
