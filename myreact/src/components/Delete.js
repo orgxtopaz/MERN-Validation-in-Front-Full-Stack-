@@ -12,16 +12,16 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom"; //route
 import { useEffect } from "react"; //a hook that GIVES  "side-effects"
 import { useHistory } from "react-router-dom"; // allows us to access our path / route history.
 
+//IMPORT FOR THE TOASTIFY
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+  //CONFIGURING TOASTIFY
+toast.configure();
+
 function Delete() {
   
   let { deleteId } = useParams();
-
-  let history = useHistory(); //USE HISTORY  it will DETERMINED OUR PAST PATH.
-
-  function handleClick() {
-    history.push("/"); //GOING BACK TO HOME PAGE / MAIN PAGE
-  }
-
   const [userDetails, setUserDetails] = useState([]);
 
   //  RETRIEVE/SHOW SPECIFIC  Users Data by its ID with the use of params---------------------------------------
@@ -38,14 +38,57 @@ function Delete() {
   }, isLoaded);
 
   //WHEN USER CLICK THE BUTTON DELETE
-  const deleteUser = () => {
-    //    //DELETE DATA ON DATABASE------------------------------------------
+  let history = useHistory(); //USE HISTORY  it will DETERMINED OUR PAST PATH.
 
-    Axios.delete(`http://localhost:5000/user/delete/${deleteId}`).then(
-      (response) => {
-        console.log("User Deleted Successfully!");
-      }
-    );
+  //FUNCTION TO DELETE USER
+  const deleteUser = () => {
+  
+    function save() {
+      toast.success("Deleted Successfully❗", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: true,
+      });
+
+       ////DELETE DATA ON DATABASE------------------------------------------
+      Axios.delete(`http://localhost:5000/user/delete/${deleteId}`).then(
+        (response) => {
+          console.log("User Deleted Successfully!");
+          history.push("/"); //GOING BACK TO HOME PAGE / MAIN PAGE
+          window.location.reload();
+        
+        }
+      );
+    
+    }
+
+    //----------------------------------
+    const cancel = () => {
+      window.location.reload();
+    };
+
+    const CustomToast = (closeToast) => {
+      return (
+        <div style={{ width: "300px" }}>
+          <p>Are you sure you want to delete the record?</p>
+          <button type="submit" onClick={save} className="btn ">
+            <i className="btn  bi bi-check2" style={{ fontSize: "25px" }}></i>
+          </button>
+
+          <button type="submit" onClick={cancel} className="btn ">
+            <i className="btn  bi bi-x" style={{ fontSize: "25px" }}></i>
+          </button>
+
+        </div>
+      );
+    };
+
+    ///--------------------------------
+    toast.info(<CustomToast />, {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: false,
+      closeOnClick: false,
+      icon: false,
+    });
   };
 
   return (
