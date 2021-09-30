@@ -87,6 +87,7 @@ function Forms() {
   const [userList, setUserList] = useState([]);
 
   /// ADD DATA TO DATABASE----------------------------------------
+
   const addUser = (data) => {
     console.log(fullname, date);
     //CURRENT DATE
@@ -140,38 +141,23 @@ function Forms() {
             contactNumber: data.contactNumber,
           },
         ]);
+        
+      
+        window.location.reload();
       });
-      window.location.reload();
     } else {
       alert("Registered date field accept current date");
     }
   };
 
-  //  RETRIEVE/SHOW Users Data---------------------------------------
-
-  // IF PAGE IS LOADED THEN THIS WILL HAPPEN WITH THE USE OF useEffect display on table
-
-  const isLoaded = [true];
-  useEffect(() => {
-    if (isLoaded) {
-      Axios.get("http://localhost:5000/user/").then((response) => {
-        setUserList(response.data);
-      });
-    }
-  }, isLoaded);
+  
   const [userId, setUserId] = useState("");
   console.log(userId);
   // console.log(userId)
 
-  function clickz(e) {
-    console.log(e.target.id);
+ 
 
-    //  var option = $(this).closest('button');
-    //  var hehe =JSON.stringify(option);
-  }
-  let columns = [];
-
-  columns = [
+ let columns = [
     {
       field: `_id`,
       headerName: "ID",
@@ -258,6 +244,19 @@ function Forms() {
       ),
     },
   ];
+
+  //  RETRIEVE/SHOW Users Data---------------------------------------
+
+  // IF PAGE IS LOADED THEN THIS WILL HAPPEN WITH THE USE OF useEffect display on table
+
+  const isLoaded = [true];
+  useEffect(() => {
+    if (isLoaded) {
+      Axios.get("http://localhost:5000/user/").then((response) => {
+        setUserList(response.data);
+      });
+    }
+  }, isLoaded);
 
   return (
     <>
