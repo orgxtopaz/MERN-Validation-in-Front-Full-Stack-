@@ -2,7 +2,6 @@ import React from "react";
 
 ///FORM,YUP, ALL FOR VALIDATION ALSO AXIOS FOR THE API
 import { useParams } from "react-router-dom"; // returns: an object of key/value pairs of URL parameters
-import { fontSize } from "@mui/system";
 
 import { useState } from "react"; //HERE we import useState Hook so we can add state to our functional components.
 import Axios from "axios"; //allows us to make GET and POST requests from the browser.

@@ -2,7 +2,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 
 import { BrowserRouter as Router, Route, Link } from "react-router-dom"; //routes
-import $ from "jquery";
 
 import "./component.css";
 
@@ -412,8 +411,8 @@ function Forms() {
                                 <option value="" hidden>
                                   Select Location
                                 </option>
-                                <option value="Manila">Manila</option>
-                                <option value="Cebu">Cebu</option>
+                                <option value="Manila" style={{fontFamily:"Raleway', sans-serif"}}>Manila</option>
+                                <option value="Cebu" style={{fontFamily:"Raleway', sans-serif"}}>Cebu</option>
                               </select>
 
                               {/* errors will return when field validation fails  */}

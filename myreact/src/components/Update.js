@@ -179,7 +179,7 @@ function Update() {
             <div className="form-group">
               <input
                 type="email"
-                placeholder={"💌 Email Address: " + userDetails.email}
+                defaultValue={ userDetails.email}
                 className="form-control"
                 style={{ width: "90%" }}
                 onChange={(event) => {
@@ -198,7 +198,7 @@ function Update() {
               <input
                 type="text"
                 style={{ width: "90%" }}
-                placeholder={"📞 Contact Number: " + userDetails.contactNumber}
+                defaultValue={ userDetails.contactNumber}
                 className="form-control"
                 onChange={(event) => {
                   setContactNumber(event.target.value);
@@ -227,7 +227,7 @@ function Update() {
                 }}
                 {...register("location")}
                 name="location"
-                placeholder={userDetails.location}
+                defaultValue={userDetails.location}
               >
                 <option value="" hidden>
                   🌍 Select Location

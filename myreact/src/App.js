@@ -1,7 +1,7 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import { BrowserRouter as Router, Route, Link } from "react-router-dom"; //routes
+import { BrowserRouter as Router, Route} from "react-router-dom"; //routes
 import Forms from "./components/Forms";
 import About from "./components/About";
 import Contact from "./components/Contact";
@@ -33,25 +33,7 @@ function App() {
        <nav>
 
        <Router>
-            {/* <Link to="/">
-              <i
-                className="bi bi-envelope-fill input-group-text"
-                id="basic-addon1"
-              ></i>
-            </Link>
-
-            <Link to="/About">
-              <i
-                className="bi bi-envelope-fill input-group-text"
-              ></i>
-            </Link>
-            <Link to="/Contact">
-              <i
-                className="bi bi-envelope-fill input-group-text"
-                id="basic-addon1"
-              ></i>
-            </Link> */}
-
+           
             {/* ROUTES LANG SAKALAM */}
             <Route exact path="/About" component={About} />
             <Route exact path="/Contact" component={Contact} />
